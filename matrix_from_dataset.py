@@ -1,5 +1,8 @@
 def capacityVector(classroomFilename):
+	# Row -> capacity
+	# Col -> classroom
 
+	# TEST DATA
 	#capacityVectorList = [60, 60, 10, 40, 40, 120, 65, 90, 35, 100]
 	capacityVectorList = [100, 200, 300, 90, 250]
 
@@ -7,7 +10,10 @@ def capacityVector(classroomFilename):
 
 
 def schedulingMatrix(coursesFilename, timetableFilename):
+	# Row -> period
+	# Col -> course
 
+	# TEST DATA
 	schedulingMatrixList = []
 
 	"""#1
@@ -29,12 +35,12 @@ def schedulingMatrix(coursesFilename, timetableFilename):
 
 	return schedulingMatrixList
 
-	#ประเภทห้อง
-	#ห้องที่สลับกัน ความเหมาะสม?
-
 
 def periodsCountVector(coursesFilename, timetableFilename):
+	# Row -> periods count
+	# Col -> course
 
+	# TEST DATA
 	"""periodsCountVectorList = [1, 1, 3, 2]
 
 	#1
@@ -56,7 +62,10 @@ def periodsCountVector(coursesFilename, timetableFilename):
 
 
 def assignmentAvailabilityMatrix(coursesFilename, classroomFilename):
+	# Row -> course
+	# Col -> classroom
 
+	# TEST DATA
 	assignmentAvailabilityMatrixList = []
 
 	"""#1						  1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20

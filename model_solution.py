@@ -1,6 +1,5 @@
 from pulp import *
-import dataset_to_matrix as d2m
-
+import matrix_from_dataset as d2m
 
 ##########################################################################
 
@@ -34,6 +33,7 @@ def main():
 
 	# INSTANTIATE DECISION VARIABLES
 	x = LpVariable.dicts("assignment.binary.values", (range(t), range(m), range(n)), 0, 1, LpInteger)
+	y = LpVariable.dicts("temporary.binary.values", (range(m), range(n)), 0, 1, LpInteger)
 
 	# INSTANTIATE A PROBLEM
 	prob = LpProblem("cu.eng.classroom.assignment.problem", LpMinimize)
@@ -45,7 +45,6 @@ def main():
 	for p in range(t):
 		for i in range(m):
 			prob += lpSum([x[p][i][j] for j in range(n)]) == schedulingMatrix[p][i]#, "scheduling.constraint."+str(i)+"."+str(p)
-			#print ""
 
 	for p in range(t):
 		for j in range(n):
@@ -53,14 +52,14 @@ def main():
 
 	for i in range(m):
 		for j in range(n):
-			prob += lpSum([x[p][i][j] for p in range(t)]) <= periodsCountVector[i]#, "periods.count.constraint."+str(i)+"."+str(j)
+			prob += lpSum([x[p][i][j] for p in range(t)]) == y[i][j]*periodsCountVector[i] + (y[i][j]-1)*0#, "periods.count.constraint."+str(i)+"."+str(j)
 
 	for p in range(t):
 		for i in range(m):
 			for j in range(n):
 				prob += x[p][i][j] <= assignmentAvailMatrix[i][j]#, "assignment.avail.constraint."+str(i)+"."+str(j)+"."+str(p)
-	
-	# SOLVE PROBLEM BY GLPK SOLVER
+
+	# SOLVE PROBLEM USING GLPK SOLVER
 	GLPK().solve(prob)
 
 	# PRINT OUTPUTS
