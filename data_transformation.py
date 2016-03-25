@@ -1,4 +1,97 @@
+import csv
+import numpy as Numpie
+
+from config import param as Param
 from entities import *
+
+##########################################################################
+
+def periodDictionary(courseFile):
+
+	with open(courseFile) as fh:
+		reader = csv.reader(fh)
+		courseList = list(reader)
+
+	columnList = courseList[0]
+	courseList.remove(courseList[0])
+
+	smallestGap = _smallestGap(courseList)
+	earliestStart, latestEnd = _earliestAndLatestTime(courseList)
+	periodIndexDict = {}
+
+	dayList = Param.dayList
+	idx = 0
+
+	for i in range(len(dayList)):
+		start = earliestStart
+		while start < latestEnd:
+			end = start + smallestGap
+			prd = Period(dayList[i], _stampStrFromTimestamp(start), _stampStrFromTimestamp(end))
+			periodIndexDict[idx] = prd
+			idx = idx + 1
+			start = end
+
+	#print smallestGap
+	#print (_stampStrFromTimestamp(earliestStart), _stampStrFromTimestamp(latestEnd))
+
+	return periodIndexDict
+
+
+def _smallestGap(courseList):
+
+	timestampList = []
+	minDelta = Numpie.timedelta64(24, 'h')
+
+	for item in courseList:
+		timestampList.append(_timestampFromStampString(item[4]))
+		timestampList.append(_timestampFromStampString(item[5]))
+
+	for i in xrange(len(timestampList)-1):
+		for j in xrange(i+1, len(timestampList)):
+			if timestampList[i] > timestampList[j]:
+				if timestampList[i] - timestampList[j] < minDelta:
+					minDelta = timestampList[i] - timestampList[j]
+			elif timestampList[i] < timestampList[j]:
+				if timestampList[j] - timestampList[i] < minDelta:
+					minDelta = timestampList[j] - timestampList[i]
+
+	return minDelta
+
+
+def _earliestAndLatestTime(courseList):
+
+	startTimeList = []
+	endTimeList = []
+	minStartTime = _timestampFromStampString("23:59")
+	maxEndTime = _timestampFromStampString("04:00")
+
+	for item in courseList:
+		startTime = _timestampFromStampString(item[4])
+		endTime = _timestampFromStampString(item[5])
+		if startTime < minStartTime:
+			minStartTime = startTime
+		if endTime > maxEndTime:
+			maxEndTime = endTime
+
+	return (minStartTime, maxEndTime)
+
+
+def _timestampFromStampString(stampStr):
+
+	if len(stampStr) < 5:
+		stampStr = "0" + stampStr
+
+	stampStr = Param.dummyDate + "T" + stampStr
+
+	return Numpie.datetime64(stampStr)
+
+
+def _stampStrFromTimestamp(timestamp):
+
+	stampStr = str(timestamp)
+
+	return stampStr[-10:-5]
+
 
 ##########################################################################
 
@@ -49,11 +142,6 @@ def courseDictionary(courseFile):
 	return courseIndexDict
 
 
-def periodDictionary():
-
-	return ""
-
-
 def capacityVector(classroomDict):
 
 	# TEST VECTOR
@@ -75,7 +163,7 @@ def capacityVector(classroomDict):
 
 def schedulingMatrix(courseFile, periodFile):
 	"""
-	Row -> period
+	Row -> prd
 	Col -> course
 	"""
 

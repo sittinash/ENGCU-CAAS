@@ -7,6 +7,10 @@ periodsCountPerDay = 9
 earliestStartTime = "8:00"
 latestEndTime = "12:30"
 
+# DONT TOUCH !
+dummyDate = "2009-01-01"
+dayList = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
+
 """
 COURSE FILE FORMAT
 

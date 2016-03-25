@@ -1,25 +1,32 @@
 import config.param as Param
 from entities import *
-import matrix_from_dataset as MFromD
+import data_transformation as Transform
 
 ##########################################################################
 
-def testMFromD():
+def testDataTransformation():
 
 	courseFile = Param.courseFile
 	classroomFile = Param.classroomFile
 
+	# TEST periodDictionary()
+	#"""
+	periodDict = Transform.periodDictionary(Param.courseFile)
+	for key, val in periodDict.iteritems():
+		val.printPeriod()
+	#"""
+
 	# TEST courseDictionary()
 	"""
-	courseDict = MFromD.courseDictionary(courseFile)
+	courseDict = Transform.courseDictionary(Param.courseFile)
 	for key, val in courseDict.iteritems():
 		val.printCourse()
 	"""
 	
 	# TEST classroomDictionary(), capacityVector()
 	"""
-	classroomDict = MFromD.classroomDictionary(classroomFile)
-	dictCapVector = MFromD.capacityVector(classroomDict)
+	classroomDict = Transform.classroomDictionary(Param.classroomFile)
+	dictCapVector = Transform.capacityVector(classroomDict)
 
 	for key, val in classroomDict.iteritems():
 		print key
@@ -46,16 +53,15 @@ def testCourse():
 
 	room = Course(testListCourse, testColList)
 	room.printCourse()
-	
+
 
 ##########################################################################
 
 def main():
 
-	# TEST MODULE
-	#testMFromD()
+	testDataTransformation()
 	#testClassroom()
-	testCourse()
+	#testCourse()
 
 
 if __name__ == "__main__":

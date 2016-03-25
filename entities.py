@@ -76,3 +76,36 @@ class Course:
 			print key + ": " + str(val)
 
 		print "###############################"
+
+
+##########################################################################
+
+class Period:
+
+	def __init__(self, day, startTime, endTime):
+
+		self.day = day
+		self.startTime = startTime
+		self.endTime = endTime
+
+
+	def printPeriod(self):
+
+		print "###############################"
+		print "Day: " + str(self.day)
+		print "Time: " + self.startTime + " - " + self.endTime
+		print "###############################"
+
+
+##########################################################################
+"""
+class Day(Enum):
+
+	MO = 1
+	TU = 2
+	WE = 3
+	TH = 4
+	FR = 5
+	SA = 6
+	SU = 7
+"""
