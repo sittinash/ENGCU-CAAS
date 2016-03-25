@@ -1,5 +1,5 @@
 from pulp import *
-import matrix_from_dataset as d2m
+import matrix_from_dataset as mFromD
 
 ##########################################################################
 
@@ -10,24 +10,26 @@ def main():
 	timetableFilename = ""
 	classroomFilename = ""
 
-	capVector = d2m.capacityVector(classroomFilename)
-	schedulingMatrix = d2m.schedulingMatrix(coursesFilename, timetableFilename)
-	periodsCountVector = d2m.periodsCountVector(coursesFilename, timetableFilename)
-	assignmentAvailMatrix = d2m.assignmentAvailabilityMatrix(coursesFilename, classroomFilename)
+	capVector = mFromD.capacityVector(classroomFilename)
+	schedulingMatrix = mFromD.schedulingMatrix(coursesFilename, timetableFilename)
+	periodsCountVector = mFromD.periodsCountVector(coursesFilename, timetableFilename)
+	assignmentAvailMatrix = mFromD.assignmentAvailabilityMatrix(coursesFilename, classroomFilename)
 
 	t = len(schedulingMatrix)
 	m = len(periodsCountVector)
 	n = len(capVector)
 
-	# ECHO PARAMETERS
-	"""print "Scheduling Matrix:"
+	# VERIFY PARAMETERS
+	"""
+	print "Scheduling Matrix:"
 	for item in schedulingMatrix:
 		print item
 	print "periods Count Vector:"
 	print periodsCountVector
 	print "Assignment Availability Matrix:"
 	for item in assignmentAvailMatrix:
-		print item"""
+		print item
+	"""
 
 	print "(t, m, n) = " + str((t, m, n))
 

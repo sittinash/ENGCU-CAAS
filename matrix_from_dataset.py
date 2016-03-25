@@ -1,42 +1,115 @@
-def capacityVector(classroomFilename):
-	# Row -> capacity
-	# Col -> classroom
+from entities import *
 
-	# TEST DATA
+##########################################################################
+
+def classroomDictionary(classroomFile):
+	
+	with open(classroomFile) as fh:
+		reader = csv.reader(fh)
+		classroomList = list(reader)
+
+	columnList = classroomList[0]
+	classroomList.remove(classroomList[0])
+	classroomCount = len(classroomList)
+	classroomIndexDict = {}
+
+	#for item in classroomList:
+	#	print item
+	#print columnList
+
+	for i in xrange(classroomCount):
+		listRoom = classroomList[i]
+		room = Classroom(listRoom, columnList)
+		#room.printClassroom()
+		classroomIndexDict[i] = room
+
+	return classroomIndexDict
+
+
+def courseDictionary(courseFile):
+
+	with open(courseFile) as fh:
+		reader = csv.reader(fh)
+		courseList = list(reader)
+
+	columnList = courseList[0]
+	courseList.remove(courseList[0])
+	courseCount = len(courseList)
+	courseIndexDict = {}
+
+	#for item in courseList:
+	#	print item
+	#print columnList
+
+	for i in xrange(courseCount):
+		listCourse = courseList[i]
+		course = Course(listCourse, columnList)
+		courseIndexDict[i] = course
+
+	return courseIndexDict
+
+
+def periodDictionary():
+
+	return ""
+
+
+def capacityVector(classroomDict):
+
+	# TEST VECTOR
+	"""
 	#capacityVectorList = [60, 60, 10, 40, 40, 120, 65, 90, 35, 100]
 	capacityVectorList = [100, 200, 300, 90, 250]
+	"""
 
-	return capacityVectorList
+	# DATASET
+	#"""
+	dictCapacityVector = {}
+
+	for key, val in classroomDict.iteritems():
+		dictCapacityVector[key] = val.capacity 
+
+	return dictCapacityVector
+	#"""
 
 
-def schedulingMatrix(coursesFilename, timetableFilename):
-	# Row -> period
-	# Col -> course
+def schedulingMatrix(courseFile, periodFile):
+	"""
+	Row -> period
+	Col -> course
+	"""
 
-	# TEST DATA
-	schedulingMatrixList = []
+	listSchdulingMatrix = []
 
-	"""#1
-	schedulingMatrixList.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
-	schedulingMatrixList.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
-	schedulingMatrixList.append([1, 1, 0, 0, 0, 0, 0, 0, 0])
-	schedulingMatrixList.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
-	schedulingMatrixList.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
+	# TEST MATRIX
+	"""
+	#1
+	listSchdulingMatrix.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
+	listSchdulingMatrix.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
+	listSchdulingMatrix.append([1, 1, 0, 0, 0, 0, 0, 0, 0])
+	listSchdulingMatrix.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
+	listSchdulingMatrix.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
 	#6
-	schedulingMatrixList.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
-	schedulingMatrixList.append([0, 0, 0, 0, 0, 0, 1, 1, 1])
-	schedulingMatrixList.append([1, 1, 1, 0, 0, 0, 1, 1, 1])
-	schedulingMatrixList.append([0, 0, 1, 1, 1, 1, 1, 1, 0])
-	schedulingMatrixList.append([0, 0, 1, 1, 1, 1, 1, 1, 0])"""
+	listSchdulingMatrix.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
+	listSchdulingMatrix.append([0, 0, 0, 0, 0, 0, 1, 1, 1])
+	listSchdulingMatrix.append([1, 1, 1, 0, 0, 0, 1, 1, 1])
+	listSchdulingMatrix.append([0, 0, 1, 1, 1, 1, 1, 1, 0])
+	listSchdulingMatrix.append([0, 0, 1, 1, 1, 1, 1, 1, 0])
 
-	schedulingMatrixList.append([1, 0, 1, 1])
-	schedulingMatrixList.append([0, 1, 1, 1])
-	schedulingMatrixList.append([0, 0, 1, 0])
+	listSchdulingMatrix.append([1, 0, 1, 1])
+	listSchdulingMatrix.append([0, 1, 1, 1])
+	listSchdulingMatrix.append([0, 0, 1, 0])
+	"""
 
-	return schedulingMatrixList
+	# DATASET
+	#"""
+
+	#"""
+
+	return listSchdulingMatrix
 
 
-def periodsCountVector(coursesFilename, timetableFilename):
+def periodsCountVector(courseFile, timetableFilename):
 	# Row -> periods count
 	# Col -> course
 
@@ -61,7 +134,7 @@ def periodsCountVector(coursesFilename, timetableFilename):
 	return periodsCountVectorList
 
 
-def assignmentAvailabilityMatrix(coursesFilename, classroomFilename):
+def assignmentAvailabilityMatrix(courseFile, classroomFile):
 	# Row -> course
 	# Col -> classroom
 
@@ -87,5 +160,3 @@ def assignmentAvailabilityMatrix(coursesFilename, classroomFilename):
 	assignmentAvailabilityMatrixList.append([0, 0, 1, 0, 1])
 
 	return assignmentAvailabilityMatrixList
-
-
