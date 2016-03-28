@@ -34,6 +34,7 @@ class CapacityVector:
 	def getCapacityByIndex(self, index):
 
 		
+		
 
 """
 def capacityVector(classroomDict):
