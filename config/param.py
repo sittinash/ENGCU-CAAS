@@ -3,9 +3,24 @@ courseFile = "dataset/test/courses.csv"
 classroomFile = "dataset/test/classrooms.csv"
 
 # SETTINGS
-periodsCountPerDay = 9
-earliestStartTime = "8:00"
-latestEndTime = "12:30"
+
+# COLUMN NO. IN COURSE FILE
+courseNoCol = 0
+courseCodeCol = 1
+courseNameCol = 2
+courseSectionCol = 3
+courseDayCol = 4
+courseStartTimeCol = 5
+courseEndTimeCol = 6
+courseTypeCol = 7
+courseEnrollCol = 8
+
+# COLUMN NO. IN CLASSROOM FILE
+croomNoCol = 0
+croomBuildingCol = 1
+croomCodeCol = 2
+croomCapacityCol = 3
+croomTypeCol = 4
 
 # DONT TOUCH !
 dummyDate = "2009-01-01"

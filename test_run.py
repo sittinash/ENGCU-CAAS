@@ -1,43 +1,19 @@
 import config.param as Param
 from entities import *
-import data_transformation as Transform
+import vector_and_matrix as VAM
 
 ##########################################################################
 
-def testDataTransformation():
-
-	courseFile = Param.courseFile
-	classroomFile = Param.classroomFile
-
-	# TEST periodDictionary()
-	#"""
-	periodDict = Transform.periodDictionary(Param.courseFile)
-	for key, val in periodDict.iteritems():
-		val.printPeriod()
-	#"""
-
-	# TEST courseDictionary()
-	"""
-	courseDict = Transform.courseDictionary(Param.courseFile)
-	for key, val in courseDict.iteritems():
-		val.printCourse()
-	"""
+def testCourse(): # OBSOLETE
 	
-	# TEST classroomDictionary(), capacityVector()
-	"""
-	classroomDict = Transform.classroomDictionary(Param.classroomFile)
-	dictCapVector = Transform.capacityVector(classroomDict)
+	testListCourse = ['6', '2110116', 'TEST COURSE 06', 'MO', '9:30', '11:00', 'LECTURE', '120']
+	testColList =['COURSE_NO', 'COURSE_CODE', 'COURSE_NAME', 'DAY', 'START_TIME', 'END_TIME', 'TYPE', 'ENROLL']
 
-	for key, val in classroomDict.iteritems():
-		print key
-		val.printClassroom()
+	room = Course(testListCourse, testColList)
+	room.printCourse()
 
-	print ""
-	for key, val in dictCapVector.iteritems():
-		print (key, val)
-	"""
 
-def testClassroom():
+def testClassroom(): # OBSOLETE
 
 	testListClassroom = ['12', 'ENG3', '412', '60', 'lecture', 'x', 'E990']
 	testConlumnList = ['CLASSROOM_NO', 'BUILDING', 'CLASSROOM_CODE', 'CAPACITY', 'TYPE', 'ATTR1', 'ATTR2']
@@ -46,23 +22,72 @@ def testClassroom():
 	room.printClassroom()
 
 
-def testCourse():
+##########################################################################
 
-	testListCourse = ['6', '2110116', 'TEST COURSE 06', 'MO', '9:30', '11:00', 'LECTURE', '120']
-	testColList =['COURSE_NO', 'COURSE_CODE', 'COURSE_NAME', 'DAY', 'START_TIME', 'END_TIME', 'TYPE', 'ENROLL']
+def testPeriodPool():
 
-	room = Course(testListCourse, testColList)
-	room.printCourse()
+	# TEST CONSTRUCTOR AND printPool()
+	periodP = PeriodPool()
+	periodP.printPool()
+	print "Count => " + str(periodP.count)
+
+	# TEST toTimetable(~)
+	day = "MO"
+	startTime = "9:00"
+	endTime = "12:00"
+
+	timetable = periodP.toTimetable(day, startTime, endTime)
+
+	if timetable == -1:
+		print "!!! ERROR !!!"
+
+	for i in range(len(timetable)):
+		print str(i) + " -> " + str(timetable[i])
+
+	# TEST GETTERS
+	periodP.getPeriodByIndex(1).printPeriod()
+
+
+def testCoursePool():
+
+	# TEST CONSTRUCTOR AND printPool()
+	periodP = PeriodPool()
+	courseP = CoursePool(periodP)
+	courseP.printPool()
+	print "Count => " + str(courseP.count)
+
+	# TEST GETTERS
+	courseP.getCourseByIndex(4).printCourse()
+
+
+def testClassroomPool():
+
+	# TEST CONSTRUCTOR AND printPool()
+	croomP = ClassroomPool()
+	croomP.printPool()
+	print "Count => " + str(croomP.count)
+
+	# TEST GETTERS
+	croomP.getClassroomByIndex(17).printClassroom()
+
+
+##########################################################################
+
+def testVectorAndMatrix():
+
+	return -1
 
 
 ##########################################################################
 
 def main():
 
-	testDataTransformation()
-	#testClassroom()
-	#testCourse()
+	#testPeriodPool()
+	#testCoursePool()
+	#testClassroomPool()
 
+	testVectorAndMatrix()
+	
 
 if __name__ == "__main__":
 	main()

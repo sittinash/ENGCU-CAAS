@@ -6,142 +6,36 @@ from entities import *
 
 ##########################################################################
 
-def periodDictionary(courseFile):
+class CapacityVector:
 
-	with open(courseFile) as fh:
-		reader = csv.reader(fh)
-		courseList = list(reader)
+	def __init__(self, classroomPool):
 
-	columnList = courseList[0]
-	courseList.remove(courseList[0])
-
-	smallestGap = _smallestGap(courseList)
-	earliestStart, latestEnd = _earliestAndLatestTime(courseList)
-	periodIndexDict = {}
-
-	dayList = Param.dayList
-	idx = 0
-
-	for i in range(len(dayList)):
-		start = earliestStart
-		while start < latestEnd:
-			end = start + smallestGap
-			prd = Period(dayList[i], _stampStrFromTimestamp(start), _stampStrFromTimestamp(end))
-			periodIndexDict[idx] = prd
-			idx = idx + 1
-			start = end
-
-	#print smallestGap
-	#print (_stampStrFromTimestamp(earliestStart), _stampStrFromTimestamp(latestEnd))
-
-	return periodIndexDict
+		self.capacityDict, self.size = self._capacityDictWithSize(classroomPool)
 
 
-def _smallestGap(courseList):
+	def _capacityDictWithSize(self, classroomPool):
 
-	timestampList = []
-	minDelta = Numpie.timedelta64(24, 'h')
+		size = classroomPool.count
+		capDict = {}
 
-	for item in courseList:
-		timestampList.append(_timestampFromStampString(item[4]))
-		timestampList.append(_timestampFromStampString(item[5]))
+		for i in range(size):
+			room = classroomPool.getClassroomByIndex(i)
+			capDict[i] = room.capacity
 
-	for i in xrange(len(timestampList)-1):
-		for j in xrange(i+1, len(timestampList)):
-			if timestampList[i] > timestampList[j]:
-				if timestampList[i] - timestampList[j] < minDelta:
-					minDelta = timestampList[i] - timestampList[j]
-			elif timestampList[i] < timestampList[j]:
-				if timestampList[j] - timestampList[i] < minDelta:
-					minDelta = timestampList[j] - timestampList[i]
-
-	return minDelta
+		return (capDict, size)
 
 
-def _earliestAndLatestTime(courseList):
+	def printCapacityVector(self):
 
-	startTimeList = []
-	endTimeList = []
-	minStartTime = _timestampFromStampString("23:59")
-	maxEndTime = _timestampFromStampString("04:00")
-
-	for item in courseList:
-		startTime = _timestampFromStampString(item[4])
-		endTime = _timestampFromStampString(item[5])
-		if startTime < minStartTime:
-			minStartTime = startTime
-		if endTime > maxEndTime:
-			maxEndTime = endTime
-
-	return (minStartTime, maxEndTime)
+		for key, val in self.capacityDict.iteritems():
+			print "Classroom: " + str(key) + ", Capacity: " + str(val)
 
 
-def _timestampFromStampString(stampStr):
+	def getCapacityByIndex(self, index):
 
-	if len(stampStr) < 5:
-		stampStr = "0" + stampStr
+		
 
-	stampStr = Param.dummyDate + "T" + stampStr
-
-	return Numpie.datetime64(stampStr)
-
-
-def _stampStrFromTimestamp(timestamp):
-
-	stampStr = str(timestamp)
-
-	return stampStr[-10:-5]
-
-
-##########################################################################
-
-def classroomDictionary(classroomFile):
-	
-	with open(classroomFile) as fh:
-		reader = csv.reader(fh)
-		classroomList = list(reader)
-
-	columnList = classroomList[0]
-	classroomList.remove(classroomList[0])
-	classroomCount = len(classroomList)
-	classroomIndexDict = {}
-
-	#for item in classroomList:
-	#	print item
-	#print columnList
-
-	for i in xrange(classroomCount):
-		listRoom = classroomList[i]
-		room = Classroom(listRoom, columnList)
-		#room.printClassroom()
-		classroomIndexDict[i] = room
-
-	return classroomIndexDict
-
-
-def courseDictionary(courseFile):
-
-	with open(courseFile) as fh:
-		reader = csv.reader(fh)
-		courseList = list(reader)
-
-	columnList = courseList[0]
-	courseList.remove(courseList[0])
-	courseCount = len(courseList)
-	courseIndexDict = {}
-
-	#for item in courseList:
-	#	print item
-	#print columnList
-
-	for i in xrange(courseCount):
-		listCourse = courseList[i]
-		course = Course(listCourse, columnList)
-		courseIndexDict[i] = course
-
-	return courseIndexDict
-
-
+"""
 def capacityVector(classroomDict):
 
 	# TEST VECTOR
@@ -151,14 +45,15 @@ def capacityVector(classroomDict):
 	"""
 
 	# DATASET
-	#"""
+	"""
 	dictCapacityVector = {}
 
 	for key, val in classroomDict.iteritems():
 		dictCapacityVector[key] = val.capacity 
 
 	return dictCapacityVector
-	#"""
+	"""
+"""
 
 
 def schedulingMatrix(courseFile, periodFile):
@@ -222,7 +117,7 @@ def periodsCountVector(courseFile, timetableFilename):
 	return periodsCountVectorList
 
 
-def assignmentAvailabilityMatrix(courseFile, classroomFile):
+def assignmentAvailabilityMatrix(courseFile, classroomPool):
 	# Row -> course
 	# Col -> classroom
 
