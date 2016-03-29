@@ -67,8 +67,8 @@ class PeriodPool:
 				idx = idx + 1
 				start = end
 
-		print smallestGap
-		print (self._stampStrFromTimestamp(earliestStart), self._stampStrFromTimestamp(latestEnd))
+		#print smallestGap
+		#print (self._stampStrFromTimestamp(earliestStart), self._stampStrFromTimestamp(latestEnd))
 
 		return periodIndexDict
 

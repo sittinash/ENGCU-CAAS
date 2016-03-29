@@ -1,6 +1,7 @@
 import config.param as Param
+import model_solution as Soln
 from entities import *
-import vector_and_matrix as VAM
+from vector_and_matrix import *
 
 ##########################################################################
 
@@ -23,6 +24,15 @@ def testClassroom(): # OBSOLETE
 
 
 ##########################################################################
+
+def _buildPools():
+
+	periodPool = PeriodPool()
+	coursePool = CoursePool(periodPool)
+	classroomPool = ClassroomPool()
+
+	return (periodPool, coursePool, classroomPool)
+
 
 def testPeriodPool():
 
@@ -73,9 +83,55 @@ def testClassroomPool():
 
 ##########################################################################
 
-def testVectorAndMatrix():
+def testCapacityVector():
 
-	return -1
+	croomP = ClassroomPool()
+	capacityVec = CapacityVector(croomP)
+
+	capacityVec.printVector() 
+	print capacityVec.getCapacityByClassroomIndex(8) #40
+
+
+def testPeriodCountVector():
+
+	courseP = CoursePool(PeriodPool())
+	periodCountVec = PeriodCountVector(courseP)
+
+	periodCountVec.printVector()
+	print periodCountVec.getPeriodCountByCourseIndex(4) #3
+
+
+def testSchedulingMatrix():
+
+	courseP = CoursePool(PeriodPool())
+	schedulingMat = SchedulingMatrix(courseP)
+
+	schedulingMat.printMatrix()
+	print str(schedulingMat.m) + " x " + str(schedulingMat.n) 
+	print schedulingMat.getValueByIndexes(5, 4) #1
+	print schedulingMat.getValueByIndexes(2, 5) #0
+
+
+def testAssignmentAvailabilityMatrix():
+
+	courseP = CoursePool(PeriodPool())
+	croomP = ClassroomPool()
+	aaMat = AssignmentAvailabilityMatrix(courseP, croomP)
+
+	aaMat.printMatrix()
+	print str(aaMat.m) + " x " + str(aaMat.n) 
+	print aaMat.getValueByIndexes(5, 4) #1
+	print aaMat.getValueByIndexes(2, 5) #0
+
+
+##########################################################################
+
+def testModelSolution():
+
+	periodP, courseP, croomP = _buildPools()
+	solutionMat = Soln.lengDeeDeeSaiMangLeoi(periodP, courseP, croomP)
+
+	solutionMat.printMatrix()
 
 
 ##########################################################################
@@ -86,8 +142,18 @@ def main():
 	#testCoursePool()
 	#testClassroomPool()
 
-	testVectorAndMatrix()
+	#testCapacityVector()
+	#testPeriodCountVector()
+	#testSchedulingMatrix()
+	#testAssignmentAvailabilityMatrix()
+
+	testModelSolution()
 	
+
+##########################################################################
 
 if __name__ == "__main__":
 	main()
+
+
+##########################################################################

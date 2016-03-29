@@ -1,8 +1,7 @@
 # FILE DIRECTORIES
 courseFile = "dataset/test/courses.csv"
 classroomFile = "dataset/test/classrooms.csv"
-
-# SETTINGS
+solutionFile = "solution.txt"
 
 # COLUMN NO. IN COURSE FILE
 courseNoCol = 0
@@ -22,7 +21,11 @@ croomCodeCol = 2
 croomCapacityCol = 3
 croomTypeCol = 4
 
-# DONT TOUCH !
+# SYNONYMS
+LectureSynonym = ["LECTURE", "LEC", "PRACTICE", "PRAC"]
+LabSynonym = ["LAB", "LABS"]
+
+# DON'T TOUCH, BITCH !
 dummyDate = "2009-01-01"
 dayList = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
 
