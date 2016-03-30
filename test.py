@@ -1,5 +1,5 @@
 import config.param as Param
-import model_solution as Soln
+import model as Model
 from entities import *
 from vector_and_matrix import *
 
@@ -129,7 +129,7 @@ def testAssignmentAvailabilityMatrix():
 def testModelSolution():
 
 	periodP, courseP, croomP = _buildPools()
-	solutionMat = Soln.lengDeeDeeSaiMangLeoi(periodP, courseP, croomP)
+	solutionMat = Model.findSolution(periodP, courseP, croomP)
 
 	solutionMat.printMatrix()
 

@@ -6,7 +6,7 @@ from vector_and_matrix import *
 
 ##########################################################################
 
-def lengDeeDeeSaiMangLeoi(periodPool, coursePool, classroomPool):
+def findSolution(periodPool, coursePool, classroomPool):
 
 	# INSTANTIATE VECTORS AND MATRICES
 	capacityVec = CapacityVector(classroomPool)
