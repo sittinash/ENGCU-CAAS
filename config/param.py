@@ -1,42 +1,38 @@
 # FILE DIRECTORIES
-courseFile = "dataset/test/courses.csv"
-classroomFile = "dataset/test/classrooms.csv"
-solutionFile = "solution.txt"
+courseFile = "dataset/production/courses.csv"
+classroomFile = "dataset/production/classrooms.csv"
+solutionDotTxtFile = "output/solution.txt"
+solutionDotCSVFile = "output/solution.csv"
 
-# COLUMN NO. IN COURSE FILE
+# COURSE COLUMN POINTERS
 courseNoCol = 0
 courseCodeCol = 1
 courseNameCol = 2
 courseSectionCol = 3
-courseDayCol = 4
-courseStartTimeCol = 5
-courseEndTimeCol = 6
-courseTypeCol = 7
+courseTypeCol = 4
+courseDayCol = 5
+courseStartTimeCol = 6
+courseEndTimeCol = 7
 courseEnrollCol = 8
 
-# COLUMN NO. IN CLASSROOM FILE
+# CLASSROOM COLUMN POINTERS
 croomNoCol = 0
 croomBuildingCol = 1
 croomCodeCol = 2
-croomCapacityCol = 3
-croomTypeCol = 4
+croomTypeCol = 3
+croomCapacityCol = 4
 
-# SYNONYMS
-LectureSynonym = ["LECTURE", "LEC", "PRACTICE", "PRAC"]
-LabSynonym = ["LAB", "LABS"]
+# COLUMN VALUES
+courseTypeValueList = ('DISC', 'FWK', 'IDPS', 'L/L', 'L/P', 'LAB', 'LECT', 'PRAC', 'SMNA')
+
+# SOLUTION FILE COLUMNS
+solutionFileColumnNameList = ('COURSE_NO', 'COURSE_CODE', 'COURSE_NAME', 'COURSE_SECTION', 'COURSE_TYPE', 'COURSE_DAY', 'COURSE_STARTTIME', 'ROOM_BUILDING', 'ROOM_CODE', 'ENROLL', 'CAPACITY')
+'''
+* Changing global variable solutionFileColumnNameList forces functions;
+	-> exportSolutionDotCSV(self, coursePool, classroomPool, solutionFile)
+to be changed too.
+'''
 
 # DON'T TOUCH, BITCH !
 dummyDate = "2009-01-01"
-dayList = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
-
-"""
-COURSE FILE FORMAT
-
-CLASSROOM FILE FORMAT
-	- The first column is always CLASSROOM_NO starting with 1.
-	- The second column is always BUILDING which contains information of which building a classroom resides in. 
-	- The third column is always CLASSROOM_CODE.
-	- The forth column is always CAPACITY.
-	- The fifth column is always TYPE.
-	- The first 5 columns are mandatory as specified above. Another may contain optional attributes.
-"""
+dayList = ('MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU')

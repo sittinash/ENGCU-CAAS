@@ -12,11 +12,11 @@ class Period:
 		self.day = day
 		self.startTime = startTime
 		self.endTime = endTime
+		#self.printPeriod()
 
 
 	def printPeriod(self):
 
-		print "###############################"
 		print "Day: " + str(self.day)
 		print "Time: " + self.startTime + " - " + self.endTime
 		print "###############################"
@@ -58,11 +58,11 @@ class PeriodPool:
 		dayList = Param.dayList
 		idx = 0
 
-		for i in range(1):#len(dayList)):
+		for day in dayList:
 			start = earliestStart
 			while start < latestEnd:
 				end = start + smallestGap
-				prd = Period(dayList[i], self._stampStrFromTimestamp(start), self._stampStrFromTimestamp(end))
+				prd = Period(day, self._stampStrFromTimestamp(start), self._stampStrFromTimestamp(end))
 				periodIndexDict[idx] = prd
 				idx = idx + 1
 				start = end
@@ -79,6 +79,8 @@ class PeriodPool:
 		minDelta = Numpie.timedelta64(24, 'h')
 
 		for item in courseList:
+			#print item
+			#print item[Param.courseStartTimeCol]
 			timestampList.append(self._timestampFromStampString(item[Param.courseStartTimeCol]))
 			timestampList.append(self._timestampFromStampString(item[Param.courseEndTimeCol]))
 
@@ -140,16 +142,6 @@ class PeriodPool:
 
 		return self.periodDict[index]
 
-	"""
-	def getIndexByPeriod(self, period):
-
-		for key, val in self.periodDict.iteritems():
-			if period.isEqualTo(val):
-				return key
-
-		return -1
-	"""
-
 
 	def toTimetable(self, day, startTime, endTime):
 
@@ -187,34 +179,46 @@ class Course:
 		self.code = str(listCourse[Param.courseCodeCol])
 		self.name = str(listCourse[Param.courseNameCol])
 		self.section = int(listCourse[Param.courseSectionCol])
-		self.timetable = periodPool.toTimetable(listCourse[Param.courseDayCol], listCourse[Param.courseStartTimeCol], listCourse[Param.courseEndTimeCol])
+		self.day = str(listCourse[Param.courseDayCol])
+		self.startTime = str(listCourse[Param.courseStartTimeCol])
+		self.endTime = str(listCourse[Param.courseEndTimeCol])
+		#self.timetable = periodPool.toTimetable(listCourse[Param.courseDayCol], listCourse[Param.courseStartTimeCol], listCourse[Param.courseEndTimeCol])
 		self.type = str(listCourse[Param.courseTypeCol])
 		self.enroll = int(listCourse[Param.courseEnrollCol])
+		"""
 		self.attributes = {}
 
 		for i in range(Param.courseEnrollCol+1, len(listCourse)):
 			attr = str(columnList[i])
 			val = listCourse[i]
 			self.attributes[attr] = val
+		"""
+		#self.printCourse()
 
 
 	def printCourse(self):
 
-		print "###############################"
 		print "No.: " + str(self.no)
 		print "Code: " + self.code
 		print "Name: " + self.name
 		print "Section: " + str(self.section)
-		print "Tmetable: " 
-		for i in range(len(self.timetable)):
-			print str(i) + " -> " + str(self.timetable[i])
+		print "Day: " + self.day
+		print "Time: " + self.startTime + " - " + self.endTime
+		#print "Tmetable: " 
+		#for i in range(len(self.timetable)):
+		#	print str(i) + " -> " + str(self.timetable[i])
 		print "Type: " + self.type
 		print "Enroll: " + str(self.enroll)
-
+		"""
 		for key, val in self.attributes.iteritems():
 			print key + ": " + str(val)
-
+		"""
 		print "###############################"
+
+
+	def timetable(self, periodPool):
+
+		return periodPool.toTimetable(self.day, self.startTime, self.endTime)
 			
 
 ##########################################################################
@@ -270,20 +274,22 @@ class Classroom:
 
 		self.no = int(listClassroom[Param.croomNoCol])
 		self.building = str(listClassroom[Param.croomBuildingCol])
-		self.code = str(listClassroom[Param.croomBuildingCol])
+		self.code = str(listClassroom[Param.croomCodeCol])
 		self.capacity = int(listClassroom[Param.croomCapacityCol])
 		self.type = str(listClassroom[Param.croomTypeCol])
+		"""
 		self.attributes = {}
 
 		for i in range(Param.croomTypeCol+1, len(listClassroom)):
 			attr = str(columnList[i])
 			val = listClassroom[i]
 			self.attributes[attr] = val
+		"""
+		#self.printClassroom()
 
 
 	def printClassroom(self):
 
-		print "###############################"
 		print "No.: " + str(self.no)
 		print "Building: " + self.building
 		print "Code: " + self.code
@@ -298,7 +304,7 @@ class Classroom:
 
 ##########################################################################
 
-class ClassroomPool():
+class ClassroomPool:
 
 	def __init__(self, classroomFile = Param.classroomFile):
 
