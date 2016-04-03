@@ -1,24 +1,53 @@
+import sys
+import time
 import csv
 import random
+import numpy as Numpie
 
 # PRIMARY FILE DIRECTORIES
-sciPrimaryFile = "dataset/production/23S20152.txt"
-engPrimaryFile = "dataset/production/21S20152.txt"
-culiPrimaryFile = "dataset/production/55S20152.txt"
+
+sciPrimaryFile = "dataset/production/primary/23S20152.txt"
+engPrimaryFile = "dataset/production/primary/21S20152.txt"
+culiPrimaryFile = "dataset/production/primary/55S20152.txt"
 
 # SECONDARY FILE DIRECTORIES
-sciSecondaryFile = "dataset/production/processed_23S20152.csv"
-endSecondaryFile = "dataset/production/processed_21S20152.csv"
-culiSecondaryFile = "dataset/production/processed_55S20152.csv"
-secondaryFile = "dataset/production/processed_combinedSchedule.csv"
+
+sciSecondaryFile = "dataset/production/secondary/processed_23S20152.csv"
+endSecondaryFile = "dataset/production/secondary/processed_21S20152.csv"
+culiSecondaryFile = "dataset/production/secondary/processed_55S20152.csv"
+secondaryFile = "dataset/production/secondary/processed_combinedSchedule.csv"
+"""
+secondaryFile = "dataset/test1/secondary/processed_combinedSchedule.csv"
+"""
 
 # FINAL FILE DIRECTORIES
-courseFinalFile = "dataset/production/courses.csv"
-classroomFinalFile = "dataset/production/classrooms.csv"
+
+periodFinalFile = "dataset/production/final/periods.csv"
+courseFinalFile = "dataset/production/final/courses.csv"
+classroomFinalFile = "dataset/production/final/classrooms.csv"
+"""
+periodFinalFile = "dataset/test1/final/periods.csv"
+courseFinalFile = "dataset/test1/final/courses.csv"
+classroomFinalFile = "dataset/test1/final/classrooms.csv"
+"""
+
+# VECTOR AND MATRICES FILE DIRECTORIES
+
+capacityVectorFile = "dataset/production/vam/capacityVector.csv"
+periodCountVectorFile = "dataset/production/vam/periodCountVector.csv"
+schedulingMatrixFile = "dataset/production/vam/schedulingMatrix.csv"
+aaMatrixFile = "dataset/production/vam/assignmentAvailabilityMatrix.csv"
+"""
+capacityVectorFile = "dataset/test1/vam/capacityVector.csv"
+periodCountVectorFile = "dataset/test1/vam/periodCountVector.csv"
+schedulingMatrixFile = "dataset/test1/vam/schedulingMatrix.csv"
+aaMatrixFile = "dataset/test1/vam/assignmentAvailabilityMatrix.csv"
+"""
 
 # COLUMN POINTER
 primaryFileColumnDict = {'COURSE_CODE': 0, 'COURSE_NAME': 1, 'COURSE_SECTION': 8, 'COURSE_TYPE': 9, 'COURSE_DAY': 10, 'COURSE_TIME': 17, 'ROOM_BUILDING': 18, 'ROOM_CODE': 19, 'ENROLL': 24,}
 secondaryFileColumnDict = {'COURSE_NO': 0, 'COURSE_CODE': 1, 'COURSE_NAME': 2, 'COURSE_SECTION': 3, 'COURSE_TYPE': 4, 'COURSE_DAY': 5, 'COURSE_STARTTIME': 6, 'COURSE_ENDTIME': 7, 'ROOM_BUILDING': 8, 'ROOM_CODE': 9, 'ENROLL': 10, 'CAPACITY': 11}
+periodFinalFileColumnDict = {'PERIOD_NO': 0, 'COURSE_DAY': 1, 'COURSE_STARTTIME': 2, 'COURSE_ENDTIME': 3}
 courseFinalFileColumnDict = {'COURSE_NO': 0, 'COURSE_CODE': 1, 'COURSE_NAME': 2, 'COURSE_SECTION': 3, 'COURSE_TYPE': 4, 'COURSE_DAY': 5, 'COURSE_STARTTIME': 6, 'COURSE_ENDTIME': 7, 'ENROLL': 8}
 classroomFinalFileColumnDict = {'ROOM_NO': 0, 'ROOM_BUILDING': 1, 'ROOM_CODE': 2, 'ROOM_TYPE': 3, 'CAPACITY': 4}
 '''
@@ -29,9 +58,11 @@ to be changed too.
 '''
 
 # COLUMN VALUES
-typeValueList = ('DISC', 'FWK', 'IDPS', 'L/L', 'L/P', 'LAB', 'LECT', 'PRAC', 'SMNA')
-unwantedTypeValueList = ('LAB')
+typeValueList = ('DISC', 'FWK', 'IDPS', 'L/L', 'L/P', 'LECT', 'PRAC', 'SMNA') #'LAB'
 buildingValueList = ('CE', 'CELAB', 'CHE', 'CHEMT', 'EE', 'EN100', 'ENG1', 'ENG2', 'ENG3', 'ENG4', 'ENG5', 'ENV', 'HANS', 'HV', 'NT', 'SALAB', 'SVBLD')
+
+# DON'T TOUCH, BITCH !
+dummyDate = "2009-01-01"
 
 #########################################################
 
@@ -72,7 +103,7 @@ def csvFileFromTxtFile(txtFile, csvFile):
 		 	#if listRow[1] == 'WORK PROC DES IPV':
 		 	#	print listRow
 
-		 	if ('AR' not in listRow) and ('IA' not in listRow) and ('AR-AR' not in listRow) and (listRow[primaryFileColumnDict['ROOM_BUILDING']] in buildingValueList):
+		 	if ('AR' not in listRow) and ('IA' not in listRow) and ('AR-AR' not in listRow) and (listRow[primaryFileColumnDict['ROOM_BUILDING']] in buildingValueList) and (listRow[primaryFileColumnDict['COURSE_TYPE']] not in typeValueList):
 				counter = counter + 1
 				listRow = _essentialColumnList(listRow, counter)
 				writer.writerow(listRow)
@@ -181,16 +212,20 @@ def finalPreprocess():
 
 	global secondaryFile
 
+	global periodFinalFile
 	global courseFinalFile
 	global classroomFinalFile
 
 	global secondaryFileColumnDict
+
+	global periodFinalFileColumnDict
 	global courseFinalFileColumnDict
 	global classroomFinalFileColumnDict
 
 	sortedCourseColumnList = sorted(list(courseFinalFileColumnDict), key = _valueToSortCourseFinalFileColumns)
 	sortedCroomColumnList = sorted(list(classroomFinalFileColumnDict), key = _valueToSortClassroomFinalFileColumns)
 
+	# EXPORT COURSE FILE AND CLASSROOM FILE 
 	with open(secondaryFile) as inFile, open(courseFinalFile, 'w') as outCourseFile, open(classroomFinalFile, 'w') as outCroomFile:
 
 		reader = csv.reader(inFile)
@@ -232,6 +267,133 @@ def finalPreprocess():
 					croomWriter.writerow(croomRowList)
 
 
+	# EXPORT PERIOD FILE
+	with open(courseFinalFile) as inFile, open(periodFinalFile, 'w') as outFile:
+
+		reader = csv.reader(inFile)
+		writer = csv.writer(outFile)
+
+		courseList = list(reader)
+		columnList = courseList[0]
+		courseList.remove(courseList[0])
+
+		minGap = _minGap(courseList)
+
+		sortedPeriodColumnList = sorted(list(periodFinalFileColumnDict), key = _valueToSortPeriodFinalFileColumns)
+		writer.writerow(sortedPeriodColumnList)
+
+		periodCount = 0
+		periodList = []
+
+		for course in courseList:
+			
+			day = course[courseFinalFileColumnDict['COURSE_DAY']]
+			startTime = course[courseFinalFileColumnDict['COURSE_STARTTIME']]
+			endTime = course[courseFinalFileColumnDict['COURSE_ENDTIME']]
+
+			periodList = periodList + _periodListFromStartAndEnd(periodList, day, startTime, endTime, minGap)
+			#periodList = list(set(periodList))
+
+			#print course
+			#print len(periodList)
+			#print "#############################"
+
+		for period in periodList:
+
+			periodRowList = []
+			periodCount += 1
+
+			for col in sortedPeriodColumnList:
+				if col == 'PERIOD_NO':
+					periodRowList.append(periodCount)
+				#elif col == 'COURSE_STARTTIME' or col == 'COURSE_ENDTIME':
+				#	periodRowList.append(period[periodFinalFileColumnDict[col]-1])
+				else:
+					periodRowList.append(period[periodFinalFileColumnDict[col]-1])
+
+			writer.writerow(periodRowList)
+
+
+def _periodListFromStartAndEnd(periodList, day, startTime, endTime, minGap):
+
+	startStamp = _timestampFromStampString(startTime)
+	endStamp = _timestampFromStampString(endTime)
+
+	tempList = []
+
+	while startStamp < endStamp:
+
+		#print (day, startStamp, endStamp)
+		#print startStamp + minGap
+		#print (startStamp < endStamp)
+
+		period = (day, _stampStrFromTimestamp(startStamp), _stampStrFromTimestamp(startStamp + minGap))
+
+		if period not in periodList:
+
+			#if period == ('FR', '09:00', '09:30'):
+			#	print period not in periodList
+
+			tempList.append(period)
+
+		startStamp = startStamp + minGap
+
+	#print "######################"
+
+	return tempList
+
+
+def _minGap(courseList):
+
+		global courseFinalFileColumnDict
+
+		timestampList = []
+		minDelta = Numpie.timedelta64(24, 'h')
+
+		for item in courseList:
+			#print item
+			#print item[Param.courseStartTimeCol]
+			timestampList.append(_timestampFromStampString(item[courseFinalFileColumnDict['COURSE_STARTTIME']]))
+			timestampList.append(_timestampFromStampString(item[courseFinalFileColumnDict['COURSE_ENDTIME']]))
+
+		for i in xrange(len(timestampList)-1):
+			for j in xrange(i+1, len(timestampList)):
+				if timestampList[i] > timestampList[j]:
+					if timestampList[i] - timestampList[j] < minDelta:
+						minDelta = timestampList[i] - timestampList[j]
+				elif timestampList[i] < timestampList[j]:
+					if timestampList[j] - timestampList[i] < minDelta:
+						minDelta = timestampList[j] - timestampList[i]
+
+		return minDelta
+
+
+def _timestampFromStampString(stampStr):
+
+		if len(stampStr) < 5:
+			stampStr = "0" + stampStr
+
+		global dummyDate
+
+		stampStr = dummyDate + "T" + stampStr
+
+		return Numpie.datetime64(stampStr)
+
+
+def _stampStrFromTimestamp(timestamp):
+
+	stampStr = str(timestamp)
+
+	return stampStr[-10:-5]
+
+
+def _valueToSortPeriodFinalFileColumns(key):
+
+	global periodFinalFileColumnDict
+
+	return periodFinalFileColumnDict[key]
+
+
 def _valueToSortCourseFinalFileColumns(key):
 
 	global courseFinalFileColumnDict
@@ -259,11 +421,184 @@ def _column(table, columnName):
 
 #########################################################
 
+def vamPreprocess():
+
+	_exportCapacityVector()
+	_exportPeriodCountVector()
+	_exportSchedulingMatrix()
+	_exportAssignmentAvailabilityMatrix()
+
+
+def _exportCapacityVector():
+
+	global classroomFinalFile
+	global capacityVectorFile
+
+	global classroomFinalFileColumnDict
+
+	with open(classroomFinalFile) as inFile, open(capacityVectorFile, 'w') as outFile:
+
+		reader = csv.reader(inFile)
+		listTable = list(reader)
+		writer = csv.writer(outFile)
+
+		for i in xrange(1, len(listTable)):
+			row = listTable[i]
+			cap = row[classroomFinalFileColumnDict['CAPACITY']]
+			writer.writerow([cap])
+
+
+def _exportPeriodCountVector():
+
+	global courseFinalFile
+	global periodCountVectorFile
+	
+	global courseFinalFileColumnDict
+
+	with open(courseFinalFile) as fh:
+
+		courseReader = csv.reader(fh)
+		listCourseTable = list(courseReader)
+		listCourseTable = listCourseTable[1:]
+
+	minGap = _minGap(listCourseTable)
+
+	with open(periodCountVectorFile, 'w') as fh:
+
+		writer = csv.writer(fh)
+
+		for row in listCourseTable:
+
+			counter = 0
+
+			startTime = row[courseFinalFileColumnDict['COURSE_STARTTIME']]
+			endTime = row[courseFinalFileColumnDict['COURSE_ENDTIME']]
+			startStamp = _timestampFromStampString(startTime)
+			endStamp = _timestampFromStampString(endTime)
+
+			while startStamp < endStamp:
+				counter += 1
+				startStamp = startStamp + minGap
+
+			writer.writerow([counter])
+
+
+def _exportSchedulingMatrix():
+
+	global periodFinalFile
+	global courseFinalFile
+	global schedulingMatrixFile
+	
+	global periodFinalFileColumnDict
+	global courseFinalFileColumnDict
+
+	with open(periodFinalFile) as fh:
+
+		periodReader = csv.reader(fh)
+		listPeriodTable = list(periodReader)
+		listPeriodTable = listPeriodTable[1:]
+
+	with open(courseFinalFile) as fh:
+
+		courseReader = csv.reader(fh)
+		listCourseTable = list(courseReader)
+		listCourseTable = listCourseTable[1:]
+
+	with open(schedulingMatrixFile, 'w') as fh:
+
+		writer = csv.writer(fh)
+
+		for cRow in listCourseTable:
+
+			listTempRow = []
+
+			cDay = cRow[courseFinalFileColumnDict['COURSE_DAY']]
+			cStartTime = cRow[courseFinalFileColumnDict['COURSE_STARTTIME']]
+			cEndTime = cRow[courseFinalFileColumnDict['COURSE_ENDTIME']]
+			cStartStamp = _timestampFromStampString(cStartTime)
+			cEndStamp = _timestampFromStampString(cEndTime)
+
+			for pRow in listPeriodTable:
+
+				pDay = pRow[periodFinalFileColumnDict['COURSE_DAY']]
+				pStartTime = pRow[periodFinalFileColumnDict['COURSE_STARTTIME']]
+				pEndTime = pRow[periodFinalFileColumnDict['COURSE_ENDTIME']]
+				pStartStamp = _timestampFromStampString(pStartTime)
+				pEndStamp = _timestampFromStampString(pEndTime)
+
+				if (cDay == pDay) and (cStartStamp <= pStartStamp) and (cEndStamp >= pEndStamp):
+					listTempRow.append(1)
+				else:
+					listTempRow.append(0)
+
+			writer.writerow(listTempRow)
+
+
+def _exportAssignmentAvailabilityMatrix():
+
+	global courseFinalFile
+	global classroomFinalFile
+	global aaMatrixFile
+
+	global courseFinalFileColumnDict
+	global classroomFinalFileColumnDict
+
+	with open(courseFinalFile) as fh:
+
+		courseReader = csv.reader(fh)
+		listCourseTable = list(courseReader)
+		listCourseTable = listCourseTable[1:]
+
+	with open(classroomFinalFile) as fh:
+
+		roomReader = csv.reader(fh)
+		listRoomTable = list(roomReader)
+		listRoomTable = listRoomTable[1:]
+
+	with open(aaMatrixFile, 'w') as fh:
+
+		writer = csv.writer(fh)
+
+		for cRow in listCourseTable:
+
+			listTempRow = []
+			cEnroll = int(cRow[courseFinalFileColumnDict['ENROLL']])
+
+			for rRow in listRoomTable:
+
+				rCap = int(rRow[classroomFinalFileColumnDict['CAPACITY']])
+
+				if (cEnroll <= rCap):
+					listTempRow.append(1)
+				else:
+					listTempRow.append(0)
+
+			writer.writerow(listTempRow)
+
+
+#########################################################
+
 def main():
 
-	primaryPreprocess()
-	secondaryPreprocess()
-	finalPreprocess()
+	if len(sys.argv) > 1:
+
+		if sys.argv[1][0] == '1':
+			print "  " + time.asctime( time.localtime(time.time()) ) + " >>>> PRIMARY PROCESSING"
+			primaryPreprocess()
+
+		if sys.argv[1][1] == '1':
+			print "  " + time.asctime( time.localtime(time.time()) ) + " >>>> SECONDARY PROCESSING"
+			secondaryPreprocess()
+
+		if sys.argv[1][2] == '1':
+			print "  " + time.asctime( time.localtime(time.time()) ) + " >>>> FINAL PROCESSING"
+			finalPreprocess()
+
+		if sys.argv[1][3] == '1':
+			print "  " + time.asctime( time.localtime(time.time()) ) + " >>>> VECTOR AND MATRIX PROCESSING"
+			vamPreprocess()
+
+	print "  " + time.asctime( time.localtime(time.time()) ) + " >>>> FINISH PREPROCESSING"
 
 
 #########################################################

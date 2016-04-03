@@ -1,0 +1,3 @@
+Problem Size: 33, 11, 104
+Objective Value: 5850
+Solution Status: Optimal

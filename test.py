@@ -5,26 +5,6 @@ from vector_and_matrix import *
 
 ##########################################################################
 
-def testCourse(): # OBSOLETE
-	
-	testListCourse = ['6', '2110116', 'TEST COURSE 06', 'MO', '9:30', '11:00', 'LECTURE', '120']
-	testColList =['COURSE_NO', 'COURSE_CODE', 'COURSE_NAME', 'DAY', 'START_TIME', 'END_TIME', 'TYPE', 'ENROLL']
-
-	room = Course(testListCourse, testColList)
-	room.printCourse()
-
-
-def testClassroom(): # OBSOLETE
-
-	testListClassroom = ['12', 'ENG3', '412', '60', 'lecture', 'x', 'E990']
-	testConlumnList = ['CLASSROOM_NO', 'BUILDING', 'CLASSROOM_CODE', 'CAPACITY', 'TYPE', 'ATTR1', 'ATTR2']
-
-	room = Classroom(testListClassroom, testConlumnList)
-	room.printClassroom()
-
-
-##########################################################################
-
 def _buildPools():
 
 	periodPool = PeriodPool()
@@ -34,56 +14,117 @@ def _buildPools():
 	return (periodPool, coursePool, classroomPool)
 
 
+##########################################################################
+
+def testPeriod():
+
+	with open(Param.periodFile) as fh:
+		reader = csv.reader(fh)
+		listTable = list(reader)
+
+	testPeriod1 = Period(listTable[1])
+	testPeriod2 = Period(listTable[67])
+	testPeriod3 = Period(listTable[100])
+	testPeriod4 = Period(listTable[157])
+
+	testPeriod1.printPeriod()
+	testPeriod2.printPeriod()
+	testPeriod3.printPeriod()
+	testPeriod4.printPeriod()
+
+
 def testPeriodPool():
 
 	# TEST CONSTRUCTOR AND printPool()
 	periodP = PeriodPool()
 	periodP.printPool()
-	print "Count => " + str(periodP.count)
+	print "  >>>> Count => " + str(periodP.count)
+	print ""
 
 	# TEST toTimetable(~)
-	day = "MO"
-	startTime = "9:00"
-	endTime = "12:00"
+	day = "TU"
+	startTime = "12:30"
+	endTime = "13:00"
 
 	timetable = periodP.toTimetable(day, startTime, endTime)
 
 	if timetable == -1:
 		print "!!! ERROR !!!"
+		print ""
 
 	for i in range(len(timetable)):
 		print str(i) + " -> " + str(timetable[i])
+	print ""
 
 	# TEST GETTERS
-	periodP.getPeriodByIndex(1).printPeriod()
+	periodP.getPeriodByIndex(156).printPeriod()
+
+
+##########################################################################
+
+def testCourse():
+	
+	with open(Param.courseFile) as fh:
+		reader = csv.reader(fh)
+		listTable = list(reader)
+
+	testCourse1 = Course(listTable[1])
+	testCourse2 = Course(listTable[67])
+	testCourse3 = Course(listTable[100])
+	testCourse4 = Course(listTable[684])
+
+	testCourse1.printCourse()
+	testCourse2.printCourse()
+	testCourse3.printCourse()
+	testCourse4.printCourse()
 
 
 def testCoursePool():
 
 	# TEST CONSTRUCTOR AND printPool()
-	periodP = PeriodPool()
-	courseP = CoursePool(periodP)
+	courseP = CoursePool()
 	courseP.printPool()
-	print "Count => " + str(courseP.count)
+	print "  >>>> Count => " + str(courseP.count)
+	print ""
 
 	# TEST GETTERS
-	courseP.getCourseByIndex(4).printCourse()
-
-
-def testClassroomPool():
-
-	# TEST CONSTRUCTOR AND printPool()
-	croomP = ClassroomPool()
-	croomP.printPool()
-	print "Count => " + str(croomP.count)
-
-	# TEST GETTERS
-	croomP.getClassroomByIndex(17).printClassroom()
+	courseP.getCourseByIndex(683).printCourse()
 
 
 ##########################################################################
 
-def testCapacityVector():
+def testClassroom():
+
+	with open(Param.classroomFile) as fh:
+		reader = csv.reader(fh)
+		listTable = list(reader)
+
+	testRoom1 = Classroom(listTable[1])
+	testRoom2 = Classroom(listTable[67])
+	testRoom3 = Classroom(listTable[100])
+	testRoom4 = Classroom(listTable[104])
+
+	testRoom1.printClassroom()
+	testRoom2.printClassroom()
+	testRoom3.printClassroom()
+	testRoom4.printClassroom()
+	
+
+def testClassroomPool():
+
+	# TEST CONSTRUCTOR AND printPool()
+	roomP = ClassroomPool()
+	roomP.printPool()
+	print "  >>>> Count => " + str(roomP.count)
+	print ""
+
+	# TEST GETTERS
+	roomP.getClassroomByIndex(103).printClassroom()
+
+
+##########################################################################
+
+def testCapacityVector(): # OBSOLETE
 
 	croomP = ClassroomPool()
 	capacityVec = CapacityVector(croomP)
@@ -92,7 +133,7 @@ def testCapacityVector():
 	print capacityVec.getCapacityByClassroomIndex(8) #40
 
 
-def testPeriodCountVector():
+def testPeriodCountVector(): # OBSOLETE
 
 	courseP = CoursePool(PeriodPool())
 	periodCountVec = PeriodCountVector(courseP)
@@ -101,7 +142,7 @@ def testPeriodCountVector():
 	print periodCountVec.getPeriodCountByCourseIndex(4) #3
 
 
-def testSchedulingMatrix():
+def testSchedulingMatrix(): # OBSOLETE
 
 	courseP = CoursePool(PeriodPool())
 	schedulingMat = SchedulingMatrix(courseP)
@@ -112,7 +153,7 @@ def testSchedulingMatrix():
 	print schedulingMat.getValueByIndexes(2, 5) #0
 
 
-def testAssignmentAvailabilityMatrix():
+def testAssignmentAvailabilityMatrix(): # OBSOLETE
 
 	courseP = CoursePool(PeriodPool())
 	croomP = ClassroomPool()
@@ -126,20 +167,22 @@ def testAssignmentAvailabilityMatrix():
 
 ##########################################################################
 
-def testModelSolution():
+def testFindSolution():
 
-	periodP, courseP, croomP = _buildPools()
-	solutionMat = Model.findSolution(periodP, courseP, croomP)
-
-	solutionMat.printMatrix()
+	Model.findSolution()
 
 
 ##########################################################################
 
 def main():
 
+	#testPeriod()
 	#testPeriodPool()
+
+	#testCourse()
 	#testCoursePool()
+
+	#testClassroom()
 	#testClassroomPool()
 
 	#testCapacityVector()
@@ -147,7 +190,7 @@ def main():
 	#testSchedulingMatrix()
 	#testAssignmentAvailabilityMatrix()
 
-	testModelSolution()
+	testFindSolution()
 	
 
 ##########################################################################
